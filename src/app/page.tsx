@@ -23,7 +23,9 @@ const imageFor = (product: AnyRecord) => {
   const value = product.imageUrl || product.image_url || '';
   if (!value) return '';
   if (/^https?:\/\//i.test(value)) return value;
-  try { return new URL(value, new URL(API).origin).toString(); } catch { return value; }
+  // The backend exposes stored relative media paths through /media/**.
+  const mediaPath = value.replace(/^\/+/, '').replace(/^media\//, '');
+  try { return new URL(`/media/${mediaPath}`, new URL(API).origin).toString(); } catch { return value; }
 };
 const nameFor = (product: AnyRecord) => product.productName || product.name || 'Market find';
 const promoImageFor = (product: AnyRecord) => {
